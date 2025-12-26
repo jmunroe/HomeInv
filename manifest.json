@@ -1,0 +1,41 @@
+{
+  "name": "Home Inventory",
+  "short_name": "HomeInv",
+  "description": "Track and manage your home inventory with photos and detailed information",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📦</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "application/json": [".json"]
+      }
+    }
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "backup",
+          "accept": ["application/json", ".json"]
+        }
+      ]
+    }
+  },
+  "categories": ["productivity", "utilities"],
+  "screenshots": []
+}
