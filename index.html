@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -100,7 +101,7 @@
             border-radius: 12px;
             padding: 1rem;
             margin-bottom: 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .search-controls {
@@ -149,14 +150,14 @@
             background: #fff;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .item-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
         }
 
         .item-image {
@@ -368,7 +369,7 @@
 
         .fullscreen-header {
             padding: 1rem;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             color: #fff;
             display: flex;
             justify-content: space-between;
@@ -384,7 +385,7 @@
 
         .fullscreen-footer {
             padding: 1.5rem;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             color: #fff;
             text-align: center;
         }
@@ -501,8 +502,96 @@
             font-size: 0.875rem;
             color: #6b7280;
         }
+
+        /* Menu Button */
+        .menu-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        /* Export Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .modal-btn:hover {
+            background: #f9fafb;
+            border-color: #3b82f6;
+        }
+
+        .modal-btn-icon {
+            font-size: 1.5rem;
+        }
+
+        .modal-btn-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .modal-btn-title {
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-btn-desc {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 400;
+        }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <div class="header">
@@ -510,9 +599,14 @@
             <h1>
                 📦 Home Inventory
             </h1>
-            <button id="addItemBtn" class="btn btn-primary">
-                ➕ Add Item
-            </button>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button class="menu-btn" onclick="showExportMenu()" title="Export">
+                    ⋮
+                </button>
+                <button id="addItemBtn" class="btn btn-primary">
+                    ➕ Add Item
+                </button>
+            </div>
         </div>
     </div>
 
@@ -605,7 +699,7 @@
 
             <!-- Purchase Info -->
             <h3>Purchase Information</h3>
-            
+
             <div class="form-row">
                 <div class="form-group">
                     <label>Purchase Date</label>
@@ -656,7 +750,8 @@
 
             <div class="form-group">
                 <label>Maintenance Notes</label>
-                <textarea id="maintenanceSchedule" placeholder="e.g., Annual filter replacement, quarterly inspection"></textarea>
+                <textarea id="maintenanceSchedule"
+                    placeholder="e.g., Annual filter replacement, quarterly inspection"></textarea>
             </div>
 
             <div class="form-row">
@@ -721,7 +816,8 @@
     <div id="cameraView" class="fullscreen hidden">
         <div class="fullscreen-header">
             <span style="font-size: 1.1rem; font-weight: 600;">Take Photo</span>
-            <button onclick="closeCamera()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 24px;">✖️</button>
+            <button onclick="closeCamera()"
+                style="background: none; border: none; color: #fff; cursor: pointer; font-size: 24px;">✖️</button>
         </div>
         <div class="fullscreen-content">
             <video id="cameraVideo" autoplay playsinline></video>
@@ -736,7 +832,8 @@
     <div id="scannerView" class="fullscreen hidden">
         <div class="fullscreen-header">
             <span style="font-size: 1.1rem; font-weight: 600;">Scan Barcode</span>
-            <button onclick="closeScanner()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 24px;">✖️</button>
+            <button onclick="closeScanner()"
+                style="background: none; border: none; color: #fff; cursor: pointer; font-size: 24px;">✖️</button>
         </div>
         <div class="fullscreen-content">
             <video id="scannerVideo" autoplay playsinline></video>
@@ -746,6 +843,45 @@
             <p>Position barcode within frame</p>
         </div>
     </div>
+
+    <!-- Export Modal -->
+    <div id="exportModal" class="modal hidden" onclick="closeExportMenu(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">Export Data</div>
+            <div class="modal-buttons">
+                <button class="modal-btn" onclick="exportToCSV()">
+                    <span class="modal-btn-icon">📊</span>
+                    <div class="modal-btn-content">
+                        <div class="modal-btn-title">Export to CSV</div>
+                        <div class="modal-btn-desc">For spreadsheets & insurance claims</div>
+                    </div>
+                </button>
+                <button class="modal-btn" onclick="exportToJSON()">
+                    <span class="modal-btn-icon">💾</span>
+                    <div class="modal-btn-content">
+                        <div class="modal-btn-title">Export to JSON</div>
+                        <div class="modal-btn-desc">Full backup with photos</div>
+                    </div>
+                </button>
+                <button class="modal-btn" onclick="importFromJSON()">
+                    <span class="modal-btn-icon">📥</span>
+                    <div class="modal-btn-content">
+                        <div class="modal-btn-title">Import from JSON</div>
+                        <div class="modal-btn-desc">Restore from backup</div>
+                    </div>
+                </button>
+                <button class="modal-btn" onclick="closeExportMenu()">
+                    <span class="modal-btn-icon">✖️</span>
+                    <div class="modal-btn-content">
+                        <div class="modal-btn-title">Cancel</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="importFileInput" accept=".json" style="display: none;">
 
     <script>
         // Database setup
@@ -763,13 +899,13 @@
         function initDB() {
             return new Promise((resolve, reject) => {
                 const request = indexedDB.open(DB_NAME, DB_VERSION);
-                
+
                 request.onerror = () => reject(request.error);
                 request.onsuccess = () => {
                     db = request.result;
                     resolve(db);
                 };
-                
+
                 request.onupgradeneeded = (event) => {
                     const db = event.target.result;
                     if (!db.objectStoreNames.contains(STORE_NAME)) {
@@ -786,7 +922,7 @@
             return new Promise((resolve, reject) => {
                 const transaction = db.transaction([STORE_NAME], operation === 'get' || operation === 'getAll' ? 'readonly' : 'readwrite');
                 const store = transaction.objectStore(STORE_NAME);
-                
+
                 let request;
                 if (operation === 'add' || operation === 'put') {
                     request = store.put(data);
@@ -797,7 +933,7 @@
                 } else if (operation === 'getAll') {
                     request = store.getAll();
                 }
-                
+
                 request.onsuccess = () => resolve(request.result);
                 request.onerror = () => reject(request.error);
             });
@@ -808,17 +944,17 @@
             const items = await dbOperation('getAll');
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const category = document.getElementById('categoryFilter').value;
-            
+
             const filtered = items.filter(item => {
                 const matchesSearch = (item.name || '').toLowerCase().includes(searchTerm) ||
-                                    (item.location || '').toLowerCase().includes(searchTerm);
+                    (item.location || '').toLowerCase().includes(searchTerm);
                 const matchesCategory = category === 'all' || item.category === category;
                 return matchesSearch && matchesCategory;
             });
 
             const grid = document.getElementById('itemsGrid');
             const empty = document.getElementById('emptyState');
-            
+
             if (filtered.length === 0) {
                 grid.innerHTML = '';
                 empty.classList.remove('hidden');
@@ -826,10 +962,10 @@
                 empty.classList.add('hidden');
                 grid.innerHTML = filtered.map(item => `
                     <div class="item-card" onclick="showDetail('${item.id}')">
-                        ${item.photos && item.photos.length > 0 
-                            ? `<img src="${item.photos[0]}" class="item-image" alt="${item.name}">`
-                            : `<div class="item-placeholder">📦</div>`
-                        }
+                        ${item.photos && item.photos.length > 0
+                        ? `<img src="${item.photos[0]}" class="item-image" alt="${item.name}">`
+                        : `<div class="item-placeholder">📦</div>`
+                    }
                         <div class="item-content">
                             <h3 class="item-title">${item.name}</h3>
                             <div class="item-tags">
@@ -855,13 +991,13 @@
         function showForm(item = null) {
             editingId = item ? item.id : null;
             currentPhotos = item ? (item.photos || []) : [];
-            
+
             document.getElementById('listView').classList.add('hidden');
             document.getElementById('formView').classList.remove('hidden');
             document.getElementById('addItemBtn').classList.add('hidden');
-            
+
             document.getElementById('formTitle').textContent = item ? 'Edit Item' : 'Add New Item';
-            
+
             // Fill form
             document.getElementById('itemName').value = item?.name || '';
             document.getElementById('itemCategory').value = item?.category || '';
@@ -879,7 +1015,7 @@
             document.getElementById('forSale').checked = item?.forSale || false;
             document.getElementById('askingPrice').value = item?.askingPrice || '';
             document.getElementById('saleNotes').value = item?.saleNotes || '';
-            
+
             updateGiftFields();
             updateSaleFields();
             updatePhotosDisplay();
@@ -929,7 +1065,7 @@
         async function showDetail(id) {
             const item = await dbOperation('get', id);
             currentItem = item;
-            
+
             const calculateAge = () => {
                 if (!item.purchaseDate) return null;
                 const years = (new Date() - new Date(item.purchaseDate)) / (1000 * 60 * 60 * 24 * 365);
@@ -998,7 +1134,7 @@
             // Purchase info
             if (item.purchaseDate || item.purchaseCost || item.isGift) {
                 html += `<div class="info-section"><h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Purchase Information</h2><div class="info-grid">`;
-                
+
                 if (item.purchaseDate) {
                     const age = calculateAge();
                     html += `
@@ -1024,14 +1160,14 @@
                         </div>
                     `;
                 }
-                
+
                 html += `</div></div>`;
             }
 
             // Insurance
             if (item.replacementCost || item.condition) {
                 html += `<div class="info-section"><h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Insurance & Value</h2><div class="info-row">`;
-                
+
                 if (item.replacementCost) {
                     html += `
                         <div>
@@ -1048,14 +1184,14 @@
                         </div>
                     `;
                 }
-                
+
                 html += `</div></div>`;
             }
 
             // Maintenance
             if (item.maintenanceSchedule || item.expectedLifespan) {
                 html += `<div class="info-section"><h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Maintenance & Lifecycle</h2>`;
-                
+
                 if (item.maintenanceSchedule) {
                     html += `
                         <div class="info-item">
@@ -1064,9 +1200,9 @@
                         </div>
                     `;
                 }
-                
+
                 html += `<div class="info-grid">`;
-                
+
                 if (item.expectedLifespan) {
                     const remaining = getRemainingLife();
                     html += `
@@ -1077,8 +1213,8 @@
                     `;
                 }
                 if (item.replacementPriority) {
-                    const color = item.replacementPriority === 'high' ? '#dc2626' : 
-                                 item.replacementPriority === 'medium' ? '#f59e0b' : '#059669';
+                    const color = item.replacementPriority === 'high' ? '#dc2626' :
+                        item.replacementPriority === 'medium' ? '#f59e0b' : '#059669';
                     html += `
                         <div class="info-item">
                             <div class="info-label">Replacement Priority</div>
@@ -1086,7 +1222,7 @@
                         </div>
                     `;
                 }
-                
+
                 html += `</div></div>`;
             }
 
@@ -1147,12 +1283,12 @@
         function capturePhoto() {
             const video = document.getElementById('cameraVideo');
             const canvas = document.getElementById('cameraCanvas');
-            
+
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0);
-            
+
             canvas.toBlob((blob) => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
@@ -1190,7 +1326,7 @@
                 scannerStream = stream;
                 document.getElementById('scannerVideo').srcObject = stream;
                 document.getElementById('scannerView').classList.remove('hidden');
-                
+
                 // Try to use barcode detection if available
                 if ('BarcodeDetector' in window) {
                     detectBarcode();
@@ -1209,9 +1345,9 @@
                 const barcodeDetector = new BarcodeDetector({
                     formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e']
                 });
-                
+
                 const video = document.getElementById('scannerVideo');
-                
+
                 const scan = async () => {
                     if (video.readyState === video.HAVE_ENOUGH_DATA) {
                         const barcodes = await barcodeDetector.detect(video);
@@ -1225,7 +1361,7 @@
                         requestAnimationFrame(scan);
                     }
                 };
-                
+
                 scan();
             } catch (err) {
                 console.error('Barcode detection error:', err);
@@ -1252,12 +1388,156 @@
             document.getElementById('saleFields').style.display = forSale ? 'block' : 'none';
         }
 
+        // Export/Import functions
+        function showExportMenu() {
+            document.getElementById('exportModal').classList.remove('hidden');
+        }
+
+        function closeExportMenu(event) {
+            if (!event || event.target.id === 'exportModal') {
+                document.getElementById('exportModal').classList.add('hidden');
+            }
+        }
+
+        async function exportToCSV() {
+            const items = await dbOperation('getAll');
+
+            if (items.length === 0) {
+                alert('No items to export');
+                closeExportMenu();
+                return;
+            }
+
+            // CSV headers
+            const headers = [
+                'Name', 'Category', 'Location', 'Barcode',
+                'Purchase Date', 'Purchase Cost', 'Is Gift', 'Gift From',
+                'Replacement Cost', 'Condition',
+                'Maintenance Schedule', 'Expected Lifespan', 'Replacement Priority',
+                'For Sale', 'Asking Price', 'Sale Notes',
+                'Photo Count', 'Updated At'
+            ];
+
+            // Convert items to CSV rows
+            const rows = items.map(item => [
+                escapeCsv(item.name || ''),
+                escapeCsv(item.category || ''),
+                escapeCsv(item.location || ''),
+                escapeCsv(item.barcode || ''),
+                item.purchaseDate || '',
+                item.purchaseCost || '',
+                item.isGift ? 'Yes' : 'No',
+                escapeCsv(item.giftFrom || ''),
+                item.replacementCost || '',
+                escapeCsv(item.condition || ''),
+                escapeCsv(item.maintenanceSchedule || ''),
+                item.expectedLifespan || '',
+                escapeCsv(item.replacementPriority || ''),
+                item.forSale ? 'Yes' : 'No',
+                item.askingPrice || '',
+                escapeCsv(item.saleNotes || ''),
+                (item.photos || []).length,
+                item.updatedAt || ''
+            ]);
+
+            // Create CSV content
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.join(','))
+            ].join('\n');
+
+            // Download
+            downloadFile(csvContent, 'home-inventory-export.csv', 'text/csv');
+            closeExportMenu();
+        }
+
+        function escapeCsv(value) {
+            if (value === null || value === undefined) return '';
+            const stringValue = String(value);
+            if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+                return '"' + stringValue.replace(/"/g, '""') + '"';
+            }
+            return stringValue;
+        }
+
+        async function exportToJSON() {
+            const items = await dbOperation('getAll');
+
+            if (items.length === 0) {
+                alert('No items to export');
+                closeExportMenu();
+                return;
+            }
+
+            const exportData = {
+                exportDate: new Date().toISOString(),
+                version: '1.0',
+                itemCount: items.length,
+                items: items
+            };
+
+            const jsonContent = JSON.stringify(exportData, null, 2);
+            downloadFile(jsonContent, 'home-inventory-backup.json', 'application/json');
+            closeExportMenu();
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function importFromJSON() {
+            closeExportMenu();
+            document.getElementById('importFileInput').click();
+        }
+
+        async function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+
+                if (!data.items || !Array.isArray(data.items)) {
+                    alert('Invalid backup file format');
+                    return;
+                }
+
+                const confirmMsg = `This will import ${data.items.length} items. Existing items with the same ID will be overwritten. Continue?`;
+                if (!confirm(confirmMsg)) {
+                    return;
+                }
+
+                // Import each item
+                for (const item of data.items) {
+                    await dbOperation('put', item);
+                }
+
+                alert(`Successfully imported ${data.items.length} items`);
+                loadItems();
+            } catch (err) {
+                alert('Error importing file: ' + err.message);
+            }
+
+            // Reset file input
+            event.target.value = '';
+        }
+
         // Event listeners
         document.getElementById('addItemBtn').addEventListener('click', () => showForm());
         document.getElementById('searchInput').addEventListener('input', loadItems);
         document.getElementById('categoryFilter').addEventListener('change', loadItems);
         document.getElementById('isGift').addEventListener('change', updateGiftFields);
         document.getElementById('forSale').addEventListener('change', updateSaleFields);
+        document.getElementById('importFileInput').addEventListener('change', handleImport);
 
         // Initialize
         initDB().then(() => {
@@ -1265,4 +1545,5 @@
         });
     </script>
 </body>
+
 </html>
