@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Home Inventory">
+    <title>Home Inventory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: #fff;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Search & Filter */
+        .search-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .search-controls {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        select {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+        }
+
+        /* Items Grid */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .item-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .item-placeholder {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-content {
+            padding: 1rem;
+        }
+
+        .item-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1a1a1a;
+        }
+
+        .item-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #f3f4f6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            color: #6b7280;
+        }
+
+        .item-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #059669;
+            margin-bottom: 0.5rem;
+        }
+
+        .for-sale-badge {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Form */
+        .form-section {
+            padding: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 6rem;
+        }
+
+        .form-section h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+        }
+
+        .form-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="date"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Photos */
+        .photos-grid {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+
+        .photo-item {
+            position: relative;
+        }
+
+        .photo-thumb {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .photo-add {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #9ca3af;
+            border-radius: 8px;
+            background: #f9fafb;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+        }
+
+        /* Fixed Bottom Actions */
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: #fff;
+            border-top: 2px solid #e5e7eb;
+            display: flex;
+            gap: 1rem;
+            z-index: 99;
+        }
+
+        /* Modal/Fullscreen Views */
+        .fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fullscreen-header {
+            padding: 1rem;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fullscreen-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullscreen-footer {
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            text-align: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .capture-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #fff;
+            border: 4px solid #ddd;
+            cursor: pointer;
+        }
+
+        /* Detail View */
+        .detail-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .detail-header {
+            padding: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1;
+        }
+
+        .detail-content {
+            padding: 1rem;
+        }
+
+        .detail-photos {
+            margin-bottom: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .detail-photo {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .detail-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1a1a1a;
+        }
+
+        .info-section {
+            border-top: 2px solid #e5e7eb;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .info-item {
+            margin-bottom: 0.75rem;
+        }
+
+        .info-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+        }
+
+        .empty-state {
+            background: #fff;
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .stats-text {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1>
+                📦 Home Inventory
+            </h1>
+            <button id="addItemBtn" class="btn btn-primary">
+                ➕ Add Item
+            </button>
+        </div>
+    </div>
+
+    <!-- List View -->
+    <div id="listView" class="container">
+        <div class="search-box">
+            <div class="search-controls">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search items...">
+                </div>
+                <select id="categoryFilter">
+                    <option value="all">All Categories</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Appliances">Appliances</option>
+                    <option value="Tools">Tools</option>
+                    <option value="Books">Books</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Outdoor">Outdoor</option>
+                    <option value="Kitchen">Kitchen</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div id="statsText" class="stats-text"></div>
+        </div>
+
+        <div id="itemsGrid" class="items-grid"></div>
+        <div id="emptyState" class="empty-state hidden">
+            <div style="font-size: 64px; margin-bottom: 1rem; opacity: 0.3;">📦</div>
+            <p style="font-size: 1.25rem; margin-bottom: 0.5rem;">No items yet</p>
+            <p>Add your first item to get started</p>
+        </div>
+    </div>
+
+    <!-- Form View -->
+    <div id="formView" class="hidden">
+        <div class="form-section">
+            <h2 id="formTitle">Add New Item</h2>
+
+            <!-- Photos -->
+            <div class="form-group">
+                <label>Photos</label>
+                <div id="photosGrid" class="photos-grid">
+                    <button class="photo-add" onclick="openCamera()">
+                        📷
+                    </button>
+                </div>
+            </div>
+
+            <!-- Basic Info -->
+            <div class="form-group">
+                <label>Item Name *</label>
+                <input type="text" id="itemName" placeholder="e.g., Samsung TV 65 inch">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="itemCategory">
+                        <option value="">Select...</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Appliances">Appliances</option>
+                        <option value="Tools">Tools</option>
+                        <option value="Books">Books</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Outdoor">Outdoor</option>
+                        <option value="Kitchen">Kitchen</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="itemLocation" placeholder="e.g., Living Room">
+                </div>
+            </div>
+
+            <!-- Barcode -->
+            <div class="form-group">
+                <label>Barcode / ISBN</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="itemBarcode" placeholder="Enter or scan" style="flex: 1;">
+                    <button class="btn btn-primary" onclick="openBarcodeScanner()">
+                        📱 Scan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Purchase Info -->
+            <h3>Purchase Information</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Purchase Date</label>
+                    <input type="date" id="purchaseDate">
+                </div>
+
+                <div class="form-group">
+                    <label>Purchase Cost</label>
+                    <input type="number" id="purchaseCost" placeholder="$">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-group">
+                    <input type="checkbox" id="isGift">
+                    <span>This was a gift</span>
+                </label>
+            </div>
+
+            <div class="form-group" id="giftFromGroup" style="display: none;">
+                <label>Gift From</label>
+                <input type="text" id="giftFrom">
+            </div>
+
+            <!-- Insurance & Value -->
+            <h3>Insurance & Value</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Replacement Cost</label>
+                    <input type="number" id="replacementCost" placeholder="$">
+                </div>
+
+                <div class="form-group">
+                    <label>Condition</label>
+                    <select id="condition">
+                        <option value="new">New</option>
+                        <option value="excellent">Excellent</option>
+                        <option value="good" selected>Good</option>
+                        <option value="fair">Fair</option>
+                        <option value="poor">Poor</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Maintenance -->
+            <h3>Maintenance & Lifecycle</h3>
+
+            <div class="form-group">
+                <label>Maintenance Notes</label>
+                <textarea id="maintenanceSchedule" placeholder="e.g., Annual filter replacement, quarterly inspection"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Expected Lifespan (years)</label>
+                    <input type="number" id="expectedLifespan">
+                </div>
+
+                <div class="form-group">
+                    <label>Replacement Priority</label>
+                    <select id="replacementPriority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Selling -->
+            <h3>Selling</h3>
+
+            <div class="form-group">
+                <label class="checkbox-group">
+                    <input type="checkbox" id="forSale">
+                    <span>List for sale</span>
+                </label>
+            </div>
+
+            <div id="saleFields" style="display: none;">
+                <div class="form-group">
+                    <label>Asking Price</label>
+                    <input type="number" id="askingPrice" placeholder="$">
+                </div>
+
+                <div class="form-group">
+                    <label>Sale Notes</label>
+                    <textarea id="saleNotes" placeholder="Condition details, reason for selling, etc."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fixed Bottom Actions -->
+        <div class="fixed-bottom">
+            <button class="btn btn-secondary" onclick="cancelForm()" style="flex: 1;">Cancel</button>
+            <button class="btn btn-primary" onclick="saveItem()" style="flex: 1;" id="saveBtn">Save Item</button>
+        </div>
+    </div>
+
+    <!-- Detail View -->
+    <div id="detailView" class="detail-view hidden">
+        <div class="detail-header">
+            <button class="btn" onclick="closeDetail()" style="background: none; padding: 0.5rem;">✖️</button>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-primary" onclick="editCurrentItem()">✏️ Edit</button>
+                <button class="btn btn-danger" onclick="deleteCurrentItem()">🗑️ Delete</button>
+            </div>
+        </div>
+        <div id="detailContent" class="detail-content"></div>
+    </div>
+
+    <!-- Camera View -->
+    <div id="cameraView" class="fullscreen hidden">
+        <div class="fullscreen-header">
+            <span style="font-size: 1.1rem; font-weight: 600;">Take Photo</span>
+            <button onclick="closeCamera()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 24px;">✖️</button>
+        </div>
+        <div class="fullscreen-content">
+            <video id="cameraVideo" autoplay playsinline></video>
+            <canvas id="cameraCanvas" style="display: none;"></canvas>
+        </div>
+        <div class="fullscreen-footer">
+            <button class="capture-btn" onclick="capturePhoto()"></button>
+        </div>
+    </div>
+
+    <!-- Barcode Scanner View -->
+    <div id="scannerView" class="fullscreen hidden">
+        <div class="fullscreen-header">
+            <span style="font-size: 1.1rem; font-weight: 600;">Scan Barcode</span>
+            <button onclick="closeScanner()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 24px;">✖️</button>
+        </div>
+        <div class="fullscreen-content">
+            <video id="scannerVideo" autoplay playsinline></video>
+            <div id="scannerError" style="color: #fff; padding: 2rem; text-align: center; display: none;"></div>
+        </div>
+        <div class="fullscreen-footer">
+            <p>Position barcode within frame</p>
+        </div>
+    </div>
+
+    <script>
+        // Database setup
+        const DB_NAME = 'HomeInventoryDB';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'items';
+        let db = null;
+        let currentItem = null;
+        let editingId = null;
+        let currentPhotos = [];
+        let cameraStream = null;
+        let scannerStream = null;
+
+        // Initialize DB
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        const objectStore = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                        objectStore.createIndex('category', 'category', { unique: false });
+                        objectStore.createIndex('location', 'location', { unique: false });
+                    }
+                };
+            });
+        }
+
+        // DB operations
+        function dbOperation(operation, data) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([STORE_NAME], operation === 'get' || operation === 'getAll' ? 'readonly' : 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                
+                let request;
+                if (operation === 'add' || operation === 'put') {
+                    request = store.put(data);
+                } else if (operation === 'delete') {
+                    request = store.delete(data);
+                } else if (operation === 'get') {
+                    request = store.get(data);
+                } else if (operation === 'getAll') {
+                    request = store.getAll();
+                }
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Load and display items
+        async function loadItems() {
+            const items = await dbOperation('getAll');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            
+            const filtered = items.filter(item => {
+                const matchesSearch = (item.name || '').toLowerCase().includes(searchTerm) ||
+                                    (item.location || '').toLowerCase().includes(searchTerm);
+                const matchesCategory = category === 'all' || item.category === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            const grid = document.getElementById('itemsGrid');
+            const empty = document.getElementById('emptyState');
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+            } else {
+                empty.classList.add('hidden');
+                grid.innerHTML = filtered.map(item => `
+                    <div class="item-card" onclick="showDetail('${item.id}')">
+                        ${item.photos && item.photos.length > 0 
+                            ? `<img src="${item.photos[0]}" class="item-image" alt="${item.name}">`
+                            : `<div class="item-placeholder">📦</div>`
+                        }
+                        <div class="item-content">
+                            <h3 class="item-title">${item.name}</h3>
+                            <div class="item-tags">
+                                ${item.category ? `<span class="tag">${item.category}</span>` : ''}
+                                ${item.location ? `<span class="tag">${item.location}</span>` : ''}
+                            </div>
+                            ${item.replacementCost ? `<div class="item-price">$${parseFloat(item.replacementCost).toFixed(2)}</div>` : ''}
+                            ${item.forSale ? `<div class="for-sale-badge">🏷️ For Sale</div>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Update stats
+            const totalValue = filtered.reduce((sum, item) => sum + (parseFloat(item.replacementCost) || 0), 0);
+            document.getElementById('statsText').innerHTML = `
+                ${filtered.length} item${filtered.length !== 1 ? 's' : ''}
+                ${totalValue > 0 ? ` • Total Value: $${totalValue.toFixed(2)}` : ''}
+            `;
+        }
+
+        // Show form
+        function showForm(item = null) {
+            editingId = item ? item.id : null;
+            currentPhotos = item ? (item.photos || []) : [];
+            
+            document.getElementById('listView').classList.add('hidden');
+            document.getElementById('formView').classList.remove('hidden');
+            document.getElementById('addItemBtn').classList.add('hidden');
+            
+            document.getElementById('formTitle').textContent = item ? 'Edit Item' : 'Add New Item';
+            
+            // Fill form
+            document.getElementById('itemName').value = item?.name || '';
+            document.getElementById('itemCategory').value = item?.category || '';
+            document.getElementById('itemLocation').value = item?.location || '';
+            document.getElementById('itemBarcode').value = item?.barcode || '';
+            document.getElementById('purchaseDate').value = item?.purchaseDate || '';
+            document.getElementById('purchaseCost').value = item?.purchaseCost || '';
+            document.getElementById('isGift').checked = item?.isGift || false;
+            document.getElementById('giftFrom').value = item?.giftFrom || '';
+            document.getElementById('replacementCost').value = item?.replacementCost || '';
+            document.getElementById('condition').value = item?.condition || 'good';
+            document.getElementById('maintenanceSchedule').value = item?.maintenanceSchedule || '';
+            document.getElementById('expectedLifespan').value = item?.expectedLifespan || '';
+            document.getElementById('replacementPriority').value = item?.replacementPriority || 'medium';
+            document.getElementById('forSale').checked = item?.forSale || false;
+            document.getElementById('askingPrice').value = item?.askingPrice || '';
+            document.getElementById('saleNotes').value = item?.saleNotes || '';
+            
+            updateGiftFields();
+            updateSaleFields();
+            updatePhotosDisplay();
+        }
+
+        function cancelForm() {
+            document.getElementById('formView').classList.add('hidden');
+            document.getElementById('listView').classList.remove('hidden');
+            document.getElementById('addItemBtn').classList.remove('hidden');
+        }
+
+        async function saveItem() {
+            const name = document.getElementById('itemName').value;
+            if (!name) {
+                alert('Please enter an item name');
+                return;
+            }
+
+            const item = {
+                id: editingId || Date.now().toString(),
+                name,
+                category: document.getElementById('itemCategory').value,
+                location: document.getElementById('itemLocation').value,
+                photos: currentPhotos,
+                barcode: document.getElementById('itemBarcode').value,
+                purchaseDate: document.getElementById('purchaseDate').value,
+                purchaseCost: document.getElementById('purchaseCost').value,
+                isGift: document.getElementById('isGift').checked,
+                giftFrom: document.getElementById('giftFrom').value,
+                replacementCost: document.getElementById('replacementCost').value,
+                condition: document.getElementById('condition').value,
+                maintenanceSchedule: document.getElementById('maintenanceSchedule').value,
+                expectedLifespan: document.getElementById('expectedLifespan').value,
+                replacementPriority: document.getElementById('replacementPriority').value,
+                forSale: document.getElementById('forSale').checked,
+                askingPrice: document.getElementById('askingPrice').value,
+                saleNotes: document.getElementById('saleNotes').value,
+                updatedAt: new Date().toISOString()
+            };
+
+            await dbOperation('put', item);
+            cancelForm();
+            loadItems();
+        }
+
+        // Show detail view
+        async function showDetail(id) {
+            const item = await dbOperation('get', id);
+            currentItem = item;
+            
+            const calculateAge = () => {
+                if (!item.purchaseDate) return null;
+                const years = (new Date() - new Date(item.purchaseDate)) / (1000 * 60 * 60 * 24 * 365);
+                return years.toFixed(1);
+            };
+
+            const getRemainingLife = () => {
+                if (!item.expectedLifespan || !item.purchaseDate) return null;
+                const age = calculateAge();
+                if (!age) return null;
+                return Math.max(0, item.expectedLifespan - age).toFixed(1);
+            };
+
+            let html = '';
+
+            // Photos
+            if (item.photos && item.photos.length > 0) {
+                html += `<div class="detail-photos">`;
+                item.photos.forEach(photo => {
+                    html += `<img src="${photo}" class="detail-photo" alt="${item.name}">`;
+                });
+                html += `</div>`;
+            }
+
+            html += `<h1 class="detail-title">${item.name}</h1>`;
+
+            if (item.forSale) {
+                html += `
+                    <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-weight: 600; color: #92400e;">🏷️ For Sale: $${item.askingPrice || 'Price TBD'}</span>
+                    </div>
+                `;
+            }
+
+            // Basic info
+            if (item.category || item.location) {
+                html += `<div class="info-row" style="margin-bottom: 1.5rem;">`;
+                if (item.category) {
+                    html += `
+                        <div>
+                            <div class="info-label">Category</div>
+                            <div class="info-value">${item.category}</div>
+                        </div>
+                    `;
+                }
+                if (item.location) {
+                    html += `
+                        <div>
+                            <div class="info-label">Location</div>
+                            <div class="info-value">${item.location}</div>
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+            }
+
+            if (item.barcode) {
+                html += `
+                    <div style="background: #f3f4f6; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <div class="info-label">Barcode / ISBN</div>
+                        <div style="font-family: monospace; font-size: 1.1rem;">${item.barcode}</div>
+                    </div>
+                `;
+            }
+
+            // Purchase info
+            if (item.purchaseDate || item.purchaseCost || item.isGift) {
+                html += `<div class="info-section"><h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Purchase Information</h2><div class="info-grid">`;
+                
+                if (item.purchaseDate) {
+                    const age = calculateAge();
+                    html += `
+                        <div class="info-item">
+                            <div class="info-label">Purchase Date</div>
+                            <div class="info-value">${new Date(item.purchaseDate).toLocaleDateString()}${age ? ` (${age} years old)` : ''}</div>
+                        </div>
+                    `;
+                }
+                if (item.purchaseCost) {
+                    html += `
+                        <div class="info-item">
+                            <div class="info-label">Purchase Cost</div>
+                            <div class="info-value">$${parseFloat(item.purchaseCost).toFixed(2)}</div>
+                        </div>
+                    `;
+                }
+                if (item.isGift) {
+                    html += `
+                        <div class="info-item">
+                            <div class="info-label">Gift From</div>
+                            <div class="info-value">${item.giftFrom || 'Unknown'}</div>
+                        </div>
+                    `;
+                }
+                
+                html += `</div></div>`;
+            }
+
+            // Insurance
+            if (item.replacementCost || item.condition) {
+                html += `<div class="info-section"><h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Insurance & Value</h2><div class="info-row">`;
+                
+                if (item.replacementCost) {
+                    html += `
+                        <div>
+                            <div class="info-label">Replacement Cost</div>
+                            <div style="font-weight: 600; font-size: 1.25rem; color: #059669;">$${parseFloat(item.replacementCost).toFixed(2)}</div>
+                        </div>
+                    `;
+                }
+                if (item.condition) {
+                    html += `
+                        <div>
+                            <div class="info-label">Condition</div>
+                            <div class="info-value" style="text-transform: capitalize;">${item.condition}</div>
+                        </div>
+                    `;
+                }
+                
+                html += `</div></div>`;
+            }
+
+            // Maintenance
+            if (item.maintenanceSchedule || item.expectedLifespan) {
+                html += `<div class="info-section"><h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Maintenance & Lifecycle</h2>`;
+                
+                if (item.maintenanceSchedule) {
+                    html += `
+                        <div class="info-item">
+                            <div class="info-label">Maintenance Notes</div>
+                            <div>${item.maintenanceSchedule}</div>
+                        </div>
+                    `;
+                }
+                
+                html += `<div class="info-grid">`;
+                
+                if (item.expectedLifespan) {
+                    const remaining = getRemainingLife();
+                    html += `
+                        <div class="info-item">
+                            <div class="info-label">Expected Lifespan</div>
+                            <div class="info-value">${item.expectedLifespan} years${remaining !== null ? ` (${remaining} years remaining)` : ''}</div>
+                        </div>
+                    `;
+                }
+                if (item.replacementPriority) {
+                    const color = item.replacementPriority === 'high' ? '#dc2626' : 
+                                 item.replacementPriority === 'medium' ? '#f59e0b' : '#059669';
+                    html += `
+                        <div class="info-item">
+                            <div class="info-label">Replacement Priority</div>
+                            <div class="info-value" style="color: ${color}; text-transform: capitalize;">${item.replacementPriority}</div>
+                        </div>
+                    `;
+                }
+                
+                html += `</div></div>`;
+            }
+
+            // Sale notes
+            if (item.forSale && item.saleNotes) {
+                html += `
+                    <div class="info-section">
+                        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Sale Notes</h2>
+                        <div>${item.saleNotes}</div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('detailContent').innerHTML = html;
+            document.getElementById('detailView').classList.remove('hidden');
+        }
+
+        function closeDetail() {
+            document.getElementById('detailView').classList.add('hidden');
+            currentItem = null;
+        }
+
+        function editCurrentItem() {
+            closeDetail();
+            showForm(currentItem);
+        }
+
+        async function deleteCurrentItem() {
+            if (confirm('Delete this item?')) {
+                await dbOperation('delete', currentItem.id);
+                closeDetail();
+                loadItems();
+            }
+        }
+
+        // Camera functions
+        async function openCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+                });
+                cameraStream = stream;
+                document.getElementById('cameraVideo').srcObject = stream;
+                document.getElementById('cameraView').classList.remove('hidden');
+            } catch (err) {
+                alert('Camera access denied. Please enable camera permissions in your browser settings.');
+            }
+        }
+
+        function closeCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            document.getElementById('cameraView').classList.add('hidden');
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            
+            canvas.toBlob((blob) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    currentPhotos.push(reader.result);
+                    updatePhotosDisplay();
+                    closeCamera();
+                };
+                reader.readAsDataURL(blob);
+            }, 'image/jpeg', 0.8);
+        }
+
+        function updatePhotosDisplay() {
+            const grid = document.getElementById('photosGrid');
+            grid.innerHTML = currentPhotos.map((photo, idx) => `
+                <div class="photo-item">
+                    <img src="${photo}" class="photo-thumb" alt="Item photo ${idx + 1}">
+                    <button class="photo-remove" onclick="removePhoto(${idx})">✖</button>
+                </div>
+            `).join('') + `
+                <button class="photo-add" onclick="openCamera()">📷</button>
+            `;
+        }
+
+        function removePhoto(index) {
+            currentPhotos.splice(index, 1);
+            updatePhotosDisplay();
+        }
+
+        // Barcode scanner
+        async function openBarcodeScanner() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                });
+                scannerStream = stream;
+                document.getElementById('scannerVideo').srcObject = stream;
+                document.getElementById('scannerView').classList.remove('hidden');
+                
+                // Try to use barcode detection if available
+                if ('BarcodeDetector' in window) {
+                    detectBarcode();
+                } else {
+                    document.getElementById('scannerError').textContent = 'Barcode scanning not supported on this device. Please enter the code manually.';
+                    document.getElementById('scannerError').style.display = 'block';
+                    setTimeout(closeScanner, 3000);
+                }
+            } catch (err) {
+                alert('Camera access denied. Please enable camera permissions.');
+            }
+        }
+
+        async function detectBarcode() {
+            try {
+                const barcodeDetector = new BarcodeDetector({
+                    formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e']
+                });
+                
+                const video = document.getElementById('scannerVideo');
+                
+                const scan = async () => {
+                    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                        const barcodes = await barcodeDetector.detect(video);
+                        if (barcodes.length > 0) {
+                            document.getElementById('itemBarcode').value = barcodes[0].rawValue;
+                            closeScanner();
+                            return;
+                        }
+                    }
+                    if (scannerStream) {
+                        requestAnimationFrame(scan);
+                    }
+                };
+                
+                scan();
+            } catch (err) {
+                console.error('Barcode detection error:', err);
+            }
+        }
+
+        function closeScanner() {
+            if (scannerStream) {
+                scannerStream.getTracks().forEach(track => track.stop());
+                scannerStream = null;
+            }
+            document.getElementById('scannerView').classList.add('hidden');
+            document.getElementById('scannerError').style.display = 'none';
+        }
+
+        // Form field toggles
+        function updateGiftFields() {
+            const isGift = document.getElementById('isGift').checked;
+            document.getElementById('giftFromGroup').style.display = isGift ? 'block' : 'none';
+        }
+
+        function updateSaleFields() {
+            const forSale = document.getElementById('forSale').checked;
+            document.getElementById('saleFields').style.display = forSale ? 'block' : 'none';
+        }
+
+        // Event listeners
+        document.getElementById('addItemBtn').addEventListener('click', () => showForm());
+        document.getElementById('searchInput').addEventListener('input', loadItems);
+        document.getElementById('categoryFilter').addEventListener('change', loadItems);
+        document.getElementById('isGift').addEventListener('change', updateGiftFields);
+        document.getElementById('forSale').addEventListener('change', updateSaleFields);
+
+        // Initialize
+        initDB().then(() => {
+            loadItems();
+        });
+    </script>
+</body>
+</html>
